@@ -29,8 +29,8 @@ public class MqttConnection {
 	IMqttClient publisher;
 
 	@Async
-	@Bean
-	public void connect() throws MqttException {
+	@EventListener
+	public void connect(ContextRefreshedEvent event) throws MqttException {
 		publisher = new MqttClient(String.format("tcp://%s:%s", host, port), publisherId);
 		
 		MqttConnectOptions options = new MqttConnectOptions();
