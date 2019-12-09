@@ -2,6 +2,8 @@ package cafe.deadbeef.dx_cluster_mqtt_bridge;
 
 import java.util.UUID;
 
+import javax.annotation.PreDestroy;
+
 import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -44,6 +46,7 @@ public class MqttConnection {
 		publisher.connect(options);
 	}
 	
+	@PreDestroy
 	public void disconnect() {
 		if ( publisher.isConnected() ) {
 			try {
