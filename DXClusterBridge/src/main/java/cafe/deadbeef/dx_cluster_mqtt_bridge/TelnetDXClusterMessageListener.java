@@ -18,6 +18,14 @@ public class TelnetDXClusterMessageListener implements ApplicationListener<Telne
     @Override
     public void onApplicationEvent(TelnetDXClusterMessageEvent event) {
         logger.info("Received spring custom event - " + event.getSpot());
+        if ( !mqttConnection.isConnected() ) {
+        	logger.info("Attempting to connect to MQTT...");
+        	try {
+				mqttConnection.connect();
+			} catch (MqttException e) {
+				logger.error("Error connecting to MQTT Broker", e);
+			}
+        }
         if ( mqttConnection.isConnected() ) {
         	String spotJson = event.getSpot().toString();
         	MqttMessage msg = new MqttMessage(spotJson.getBytes());
