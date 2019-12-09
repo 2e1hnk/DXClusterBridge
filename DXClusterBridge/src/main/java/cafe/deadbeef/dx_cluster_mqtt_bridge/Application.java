@@ -50,17 +50,4 @@ public class Application extends SpringBootServletInitializer {
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(Application.class);
     }
-    
-    @Bean
-    protected void startPublisher() throws MqttException {
-    	mqttConnection.connect();
-    }
-    
-    @PreDestroy
-    public void onExit() {
-      logger.info("Stoping DXClusterBridge...");
-      mqttConnection.disconnect();
-      logger.info("DXClusterBridge stopped");
-    }
-
 }
