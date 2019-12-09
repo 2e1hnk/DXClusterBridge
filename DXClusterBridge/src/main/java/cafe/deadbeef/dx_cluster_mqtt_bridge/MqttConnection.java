@@ -60,10 +60,13 @@ public class MqttConnection {
 	public void disconnect() {
 		if ( publisher.isConnected() ) {
 			try {
+				logger.info("Disconnecting MQTT");
 				publisher.disconnect();
 			} catch (MqttException e) {
 				logger.error("Failed to disconnect MQTT", e);
 			}
+		} else {
+			logger.info("Application is shutting down but was not connected to MQTT");
 		}
 	}
 	
