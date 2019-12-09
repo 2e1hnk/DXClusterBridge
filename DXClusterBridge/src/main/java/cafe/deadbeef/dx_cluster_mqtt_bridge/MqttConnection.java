@@ -31,6 +31,12 @@ public class MqttConnection {
 	@Value("${mqtt.port}")
 	private String port = "1883";
 	
+	@Value("${mqtt.username}")
+	private String username = "admin";
+	
+	@Value("${mqtt.password}")
+	private String password = "admin";
+	
 	String publisherId = UUID.randomUUID().toString();
 	
 	IMqttClient publisher;
@@ -44,6 +50,8 @@ public class MqttConnection {
 			options.setAutomaticReconnect(true);
 			options.setCleanSession(true);
 			options.setConnectionTimeout(10);
+			options.setUserName(username);
+			options.setPassword(password.toCharArray());
 			publisher.connect(options);
 		} catch (MqttException e) {
 			// TODO Auto-generated catch block
