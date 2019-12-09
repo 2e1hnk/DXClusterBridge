@@ -1,9 +1,6 @@
 package cafe.deadbeef.dx_cluster_mqtt_bridge;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +10,6 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class Application extends SpringBootServletInitializer {
@@ -22,9 +18,6 @@ public class Application extends SpringBootServletInitializer {
 	
 	@Autowired
 	TelnetDXClusterMessagePublisher telnetDXClusterMessagePublisher;
-	
-	@Autowired
-	static MqttConnection mqttConnection;
 	
 	@Autowired
 	DXClusterClient dxClusterClient;

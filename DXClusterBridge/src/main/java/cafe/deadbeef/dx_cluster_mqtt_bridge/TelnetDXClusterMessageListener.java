@@ -22,8 +22,11 @@ public class TelnetDXClusterMessageListener implements ApplicationListener<Telne
         	logger.info("Attempting to connect to MQTT...");
         	try {
 				mqttConnection.connect();
+				Thread.sleep(1000);
 			} catch (MqttException e) {
 				logger.error("Error connecting to MQTT Broker", e);
+			} catch (InterruptedException e) {
+				logger.error("Couldn't wait for MQTT Connection", e);
 			}
         }
         if ( mqttConnection.isConnected() ) {
