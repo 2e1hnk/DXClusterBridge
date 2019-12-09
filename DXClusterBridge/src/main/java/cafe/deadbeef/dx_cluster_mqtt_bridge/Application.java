@@ -1,6 +1,7 @@
 package cafe.deadbeef.dx_cluster_mqtt_bridge;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.slf4j.Logger;
@@ -23,7 +24,7 @@ public class Application extends SpringBootServletInitializer {
 	TelnetDXClusterMessagePublisher telnetDXClusterMessagePublisher;
 	
 	@Autowired
-	MqttConnection mqttConnection;
+	static MqttConnection mqttConnection;
 	
 	@Autowired
 	DXClusterClient dxClusterClient;
@@ -53,6 +54,13 @@ public class Application extends SpringBootServletInitializer {
     @Bean
     protected void startPublisher() throws MqttException {
     	mqttConnection.connect();
+    }
+    
+    @PreDestroy
+    public void onExit() {
+      logger.info("Stoping DXClusterBridge...");
+      mqttConnection.disconnect();
+      logger.info("DXClusterBridge stopped");
     }
 
 }

@@ -44,6 +44,16 @@ public class MqttConnection {
 		publisher.connect(options);
 	}
 	
+	public void disconnect() {
+		if ( publisher.isConnected() ) {
+			try {
+				publisher.disconnect();
+			} catch (MqttException e) {
+				logger.error("Failed to disconnect MQTT", e);
+			}
+		}
+	}
+	
 	public void publish(MqttMessage msg) throws MqttPersistenceException, MqttException {
 		publisher.publish("spot-queue", msg);
 	}
