@@ -13,7 +13,7 @@ public class TelnetDXClusterMessageListener implements ApplicationListener<Telne
 	
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	@Autowired static MqttConnection mqttConnection;
+	@Autowired MqttConnection mqttConnection;
 	
     @Override
     public void onApplicationEvent(TelnetDXClusterMessageEvent event) {
