@@ -10,6 +10,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,7 +39,7 @@ public class MqttConnection {
 	public void connect() {
 		logger.info(String.format("MQTT Connnecting to %s:%s", host, port));
 		try {
-			publisher = new MqttClient(String.format("tcp://%s:%s", host, port), publisherId);		
+			publisher = new MqttClient(String.format("tcp://%s:%s", host, port), publisherId, new MemoryPersistence());
 			MqttConnectOptions options = new MqttConnectOptions();
 			options.setAutomaticReconnect(true);
 			options.setCleanSession(true);
