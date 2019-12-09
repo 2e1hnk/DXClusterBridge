@@ -8,6 +8,8 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -17,6 +19,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MqttConnection {
+	
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Value("${mqtt.host}")
 	private String host = "127.0.0.1";
@@ -30,6 +34,7 @@ public class MqttConnection {
 
 	@Async
 	public void connect() throws MqttException {
+		logger.info(String.format("MQTT Connnecting to %s:%s", host, port));
 		publisher = new MqttClient(String.format("tcp://%s:%s", host, port), publisherId);
 		
 		MqttConnectOptions options = new MqttConnectOptions();

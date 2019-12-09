@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DXClusterClient {
 
-	private Logger logger = LoggerFactory.getLogger(DXClusterClient.class);
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Value("${dxcluster.host}")
 	private String host = "127.0.0.1";
