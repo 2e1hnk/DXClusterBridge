@@ -44,6 +44,9 @@ public class MqttConnection {
 	}
 	
 	public boolean isConnected() {
-		return publisher.isConnected();
+		if ( publisher != null ) {
+			return publisher.isConnected();
+		}
+		return false;
 	}
 }
