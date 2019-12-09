@@ -10,6 +10,8 @@ import java.io.OutputStreamWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.PreDestroy;
+
 import org.apache.commons.net.telnet.TelnetClient;
 
 import org.slf4j.Logger;
@@ -35,6 +37,8 @@ public class DXClusterClient {
 	private String user = "2e1hnk";
 	@Value("${dxcluster.login_prompt}")
 	private String login_prompt = "login: ";
+	
+	boolean running = false;
 
 	@Autowired TelnetDXClusterMessagePublisher telnetDXClusterMessagePublisher;
 
@@ -61,7 +65,7 @@ public class DXClusterClient {
 			OutputStream outStream = telnetClient.getOutputStream();
 			BufferedWriter w = new BufferedWriter(new OutputStreamWriter(outStream));
 
-			boolean running = true;
+			running = true;
 
 			while (running) {
 
@@ -129,6 +133,16 @@ public class DXClusterClient {
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@PreDestroy
+	public void disconnect() {
+		running = false;
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
