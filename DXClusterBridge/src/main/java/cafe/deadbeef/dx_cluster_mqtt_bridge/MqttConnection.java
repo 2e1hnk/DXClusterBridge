@@ -35,15 +35,19 @@ public class MqttConnection {
 	IMqttClient publisher;
 
 	@Async
-	public void connect() throws MqttException {
+	public void connect() {
 		logger.info(String.format("MQTT Connnecting to %s:%s", host, port));
-		publisher = new MqttClient(String.format("tcp://%s:%s", host, port), publisherId);
-		
-		MqttConnectOptions options = new MqttConnectOptions();
-		options.setAutomaticReconnect(true);
-		options.setCleanSession(true);
-		options.setConnectionTimeout(10);
-		publisher.connect(options);
+		try {
+			publisher = new MqttClient(String.format("tcp://%s:%s", host, port), publisherId);		
+			MqttConnectOptions options = new MqttConnectOptions();
+			options.setAutomaticReconnect(true);
+			options.setCleanSession(true);
+			options.setConnectionTimeout(10);
+			publisher.connect(options);
+		} catch (MqttException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	@PreDestroy
