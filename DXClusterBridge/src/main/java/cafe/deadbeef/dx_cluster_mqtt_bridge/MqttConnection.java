@@ -9,6 +9,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -28,8 +29,8 @@ public class MqttConnection {
 	IMqttClient publisher;
 
 	@Async
-	@EventListener
-	public void onApplicationEvent(ContextRefreshedEvent event) throws MqttException {
+	@Bean
+	public void connect() throws MqttException {
 		publisher = new MqttClient(String.format("tcp://%s:%s", host, port), publisherId);
 		
 		MqttConnectOptions options = new MqttConnectOptions();
