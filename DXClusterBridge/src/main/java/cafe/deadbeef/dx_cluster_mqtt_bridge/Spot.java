@@ -234,13 +234,13 @@ public class Spot implements Serializable {
         }
 		
 		if ( this.getSpotter_gridsquare() != null ) {
-			this.setSpotter_latitude(this.extractLatitudeFromLocator(this.getSpotter_gridsquare()));
-			this.setSpotter_longitude(this.extractLongitudeFromLocator(this.getSpotter_gridsquare()));
+			this.setSpotter_latitude(this.extractLatitudeFromLocator(this.getSpotter_gridsquare().toUpperCase()));
+			this.setSpotter_longitude(this.extractLongitudeFromLocator(this.getSpotter_gridsquare().toUpperCase()));
 		}
 		
 		if ( this.getDx_gridsquare() != null ) {
-			this.setDx_latitude(this.extractLatitudeFromLocator(this.getDx_gridsquare()));
-			this.setDx_longitude(this.extractLongitudeFromLocator(this.getDx_gridsquare()));
+			this.setDx_latitude(this.extractLatitudeFromLocator(this.getDx_gridsquare().toUpperCase()));
+			this.setDx_longitude(this.extractLongitudeFromLocator(this.getDx_gridsquare().toUpperCase()));
 		}
 		
 		if ( this.getDx_gridsquare() != null && this.getSpotter_gridsquare() != null ) {
