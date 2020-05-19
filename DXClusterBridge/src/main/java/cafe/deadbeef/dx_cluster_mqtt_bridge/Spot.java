@@ -22,8 +22,14 @@ public class Spot implements Serializable {
 	private String gridsquare;
 	private Date timestamp;
 	private String spotter_gridsquare;
+	private double spotter_latitude;
+	private double spotter_longitude;
 	private String dx_gridsquare;
+	private double dx_latitude;
+	private double dx_longitude;
+	private Double distance_nm;
 	private Double distance_km;
+	private Double bearing;
 	private String propagation_mode;
 
 	public Spot() {
@@ -226,6 +232,22 @@ public class Spot implements Serializable {
 			this.setDx_gridsquare(matcher.group("locator2"));
 			this.setPropagation_mode(matcher.group("propmode"));
         }
+		
+		if ( this.getSpotter_gridsquare() != null ) {
+			this.setSpotter_latitude(this.extractLatitudeFromLocator(this.getSpotter_gridsquare()));
+			this.setSpotter_longitude(this.extractLongitudeFromLocator(this.getSpotter_gridsquare()));
+		}
+		
+		if ( this.getDx_gridsquare() != null ) {
+			this.setDx_latitude(this.extractLatitudeFromLocator(this.getDx_gridsquare()));
+			this.setDx_longitude(this.extractLongitudeFromLocator(this.getDx_gridsquare()));
+		}
+		
+		if ( this.getDx_gridsquare() != null && this.getSpotter_gridsquare() != null ) {
+			this.setBearing(this.getBearingDegrees(this.getSpotter_gridsquare(), this.getDx_gridsquare()));
+			this.setDistance_nm(this.calculateGreatCircleDistance(this.getSpotter_gridsquare(), this.getDx_gridsquare()));
+			this.setDistance_km(1.852 * this.getDistance_nm());
+		}
 	}
 
 	/**
@@ -290,12 +312,60 @@ public class Spot implements Serializable {
 		this.distance_km = distance_km;
 	}
 
+	public Double getDistance_nm() {
+		return distance_nm;
+	}
+
+	public void setDistance_nm(Double distance_nm) {
+		this.distance_nm = distance_nm;
+	}
+
 	public String getPropagation_mode() {
 		return propagation_mode;
 	}
 
 	public void setPropagation_mode(String propagation_mode) {
 		this.propagation_mode = propagation_mode;
+	}
+
+	public double getSpotter_latitude() {
+		return spotter_latitude;
+	}
+
+	public void setSpotter_latitude(double spotter_latitude) {
+		this.spotter_latitude = spotter_latitude;
+	}
+
+	public double getSpotter_longitude() {
+		return spotter_longitude;
+	}
+
+	public void setSpotter_longitude(double spotter_longitude) {
+		this.spotter_longitude = spotter_longitude;
+	}
+
+	public double getDx_latitude() {
+		return dx_latitude;
+	}
+
+	public void setDx_latitude(double dx_latitude) {
+		this.dx_latitude = dx_latitude;
+	}
+
+	public double getDx_longitude() {
+		return dx_longitude;
+	}
+
+	public void setDx_longitude(double dx_longitude) {
+		this.dx_longitude = dx_longitude;
+	}
+
+	public Double getBearing() {
+		return bearing;
+	}
+
+	public void setBearing(Double bearing) {
+		this.bearing = bearing;
 	}
 
 	public String toString() {
@@ -317,4 +387,102 @@ public class Spot implements Serializable {
 		
 	}
 
+	// Helper functions
+	
+	public Double getBearingDegrees(String sourceLocator, String destinationLocator) {
+		return getBearingDegrees(this.extractLatitudeFromLocator(sourceLocator), this.extractLongitudeFromLocator(sourceLocator), this.extractLatitudeFromLocator(destinationLocator), this.extractLongitudeFromLocator(destinationLocator));
+	}
+	
+	public Double getBearingDegrees(Double srcLatitude, Double srcLongitude, Double dstLatitude, Double dstLongitude) {
+		return (Math.toDegrees(getBearingRadians(srcLatitude, srcLongitude, dstLatitude, dstLongitude)) + 360 ) % 360;
+	}
+	
+	public Double getBearingRadians(Double srcLatitude, Double srcLongitude, Double dstLatitude, Double dstLongitude) {
+	    double srcLat = Math.toRadians(srcLatitude);
+	    double dstLat = Math.toRadians(dstLatitude);
+	    double dLng = Math.toRadians(dstLongitude - srcLongitude);
+
+	    return Math.atan2(Math.sin(dLng) * Math.cos(dstLat),
+	            Math.cos(srcLat) * Math.sin(dstLat) - 
+	              Math.sin(srcLat) * Math.cos(dstLat) * Math.cos(dLng));
+	}
+	
+	public String getLocator(double lat, double lng) {
+		double longitude = lng + 180;
+		longitude /= 2;
+		char lonFirst = (char) ('A' + (longitude / 10));
+		char lonSecond = (char) ('0' + longitude % 10);
+		char lonThird = (char) ('A' + (longitude % 1) * 24);
+
+		double latitude = lat + 90;
+		char latFirst = (char) ('A' + (latitude / 10));
+		char latSecond = (char) ('0' + latitude % 10);
+		char latThird = (char) ('A' + (latitude % 1) * 24);
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(lonFirst);
+		sb.append(latFirst);
+		sb.append(lonSecond);
+		sb.append(latSecond);
+		sb.append(("" + lonThird).toLowerCase());
+		sb.append(("" + latThird).toLowerCase());
+
+		return sb.toString();
+	}
+
+	public double extractLatitudeFromLocator(String locator) {
+		String maidenhead = locator.toUpperCase();
+		double latitude = -90 + 10 * (maidenhead.charAt(1) - 'A') + (maidenhead.charAt(3) - '0')
+				+ 2.5 / 60 * (maidenhead.charAt(5) - 'A') + 2.5 / 60 / 2;
+		return latitude;
+	}
+
+	public double extractLongitudeFromLocator(String locator) {
+		String maidenhead = locator.toUpperCase();
+		double longitude = -180 + 20 * (maidenhead.charAt(0) - 'A') + 2 * (maidenhead.charAt(2) - '0')
+				+ 5.0 / 60 * (maidenhead.charAt(4) - 'A') + 5.0 / 60 / 2;
+		return longitude;
+	}
+	
+	public double calculateGreatCircleDistance(String locator1, String locator2) {
+	     
+	        double x1 = Math.toRadians(this.extractLatitudeFromLocator(locator1));
+	        double y1 = Math.toRadians(this.extractLongitudeFromLocator(locator1));
+	        double x2 = Math.toRadians(this.extractLatitudeFromLocator(locator2));
+	        double y2 = Math.toRadians(this.extractLongitudeFromLocator(locator2));
+
+	       /*************************************************************************
+	        * Compute using law of cosines
+	        *************************************************************************/
+	        // great circle distance in radians
+	        double angle1 = Math.acos(Math.sin(x1) * Math.sin(x2)
+	                      + Math.cos(x1) * Math.cos(x2) * Math.cos(y1 - y2));
+
+	        // convert back to degrees
+	        angle1 = Math.toDegrees(angle1);
+
+	        // each degree on a great circle of Earth is 60 nautical miles
+	        double distance1 = 60 * angle1;
+
+	        System.out.println(distance1 + " nautical miles");
+
+
+	       /*************************************************************************
+	        * Compute using Haversine formula
+	        *************************************************************************/
+	        double a = Math.pow(Math.sin((x2-x1)/2), 2)
+	                 + Math.cos(x1) * Math.cos(x2) * Math.pow(Math.sin((y2-y1)/2), 2);
+
+	        // great circle distance in radians
+	        double angle2 = 2 * Math.asin(Math.min(1, Math.sqrt(a)));
+
+	        // convert back to degrees
+	        angle2 = Math.toDegrees(angle2);
+
+	        // each degree on a great circle of Earth is 60 nautical miles
+	        double distance2 = 60 * angle2;
+
+	        return distance2;
+	    
+	}
 }
