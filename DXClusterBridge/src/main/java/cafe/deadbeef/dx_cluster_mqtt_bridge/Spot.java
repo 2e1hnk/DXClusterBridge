@@ -1,6 +1,7 @@
 package cafe.deadbeef.dx_cluster_mqtt_bridge;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,12 +17,14 @@ public class Spot implements Serializable {
 	private String comments;
 	private int time;
 	private String gridsquare;
+	private Date timestamp;
 
 	public Spot() {
-
+		this.setTimestamp(new Date());
 	}
 
 	public Spot(String spotter, Double frequency, String dx, String comments, int time) {
+		this();
 		this.setSpotter(spotter);
 		this.setFrequency(frequency);
 		this.setDx(dx);
@@ -122,6 +125,14 @@ public class Spot implements Serializable {
 	 */
 	public void setGridsquare(String gridsquare) {
 		this.gridsquare = gridsquare;
+	}
+
+	public Date getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(Date timestamp) {
+		this.timestamp = timestamp;
 	}
 
 	public String toString() {
