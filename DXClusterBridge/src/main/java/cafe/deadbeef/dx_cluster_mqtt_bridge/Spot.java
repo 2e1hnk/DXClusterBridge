@@ -219,12 +219,12 @@ public class Spot implements Serializable {
 		// Attempt to extract info from comments field
 		
 		// Try standard VHF-style, like 'AB01cd<TR>EF23gh'
-		Pattern pattern = Pattern.compile("(?<locator1>[A-Za-z0-9]{4,6})[<(](?<prop_mode>[A-Za-z]{0,2})[>)](?<locator2>[A-Za-z0-9]{4,6}).*");
+		Pattern pattern = Pattern.compile("(?<locator1>[A-Za-z0-9]{4,6})[<(](?<propmode>[A-Za-z]{0,2})[>)](?<locator2>[A-Za-z0-9]{4,6}).*");
 		Matcher matcher = pattern.matcher(comments);
 		while (matcher.find()) {
 			this.setSpotter_gridsquare(matcher.group("locator1"));
 			this.setDx_gridsquare(matcher.group("locator2"));
-			this.setPropagation_mode(matcher.group("prop_mode"));
+			this.setPropagation_mode(matcher.group("propmode"));
         }
 	}
 
